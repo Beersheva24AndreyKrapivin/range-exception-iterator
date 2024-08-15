@@ -1,12 +1,17 @@
 package telran.range;
 
+import java.util.Iterator;
+import java.util.NoSuchElementException;
+import java.util.function.Predicate;
+
 import telran.range.exception.OutOfRangeMaxValueException;
 import telran.range.exception.OutOfRangeMinException;
 
-public class Range {
+public class Range implements Iterable<Integer>{
     private static final String ERROR_MESSAGE = "max less or equal min";
     private int min;
     private int max;
+    private Predicate<Integer> predicate;
 
     private Range(int min, int max) {
         this.min = min;
@@ -20,6 +25,10 @@ public class Range {
         return new Range(min, max);
     }
 
+    void setPredicate(Predicate<Integer> predicate) {
+        this.predicate = predicate;
+    }
+
     public void checkNumber(int number) throws OutOfRangeMaxValueException, OutOfRangeMinException {
         if (number > max) {
             throw new OutOfRangeMaxValueException(max, number);
@@ -27,5 +36,36 @@ public class Range {
         if (number < min) {
             throw new OutOfRangeMinException(min, number);
         }
+    }
+
+    @Override
+    public Iterator<Integer> iterator() {
+        return new RangeIterator();        
+    }
+
+    private class RangeIterator implements Iterator<Integer> {
+        int current = min;
+
+        @Override
+        public boolean hasNext() {
+            boolean isFound = false;
+            while (current <= max && !isFound) {
+                if (predicate == null || predicate.test(current)) {
+                    isFound = true;    
+                } else {
+                    current++;
+                }
+            }    
+            return isFound;
+        }
+
+        @Override
+        public Integer next() {
+            if (! hasNext()) {
+                throw new NoSuchElementException();
+            }
+            return current++;
+        }
+  
     }
 }

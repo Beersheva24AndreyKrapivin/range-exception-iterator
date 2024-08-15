@@ -10,7 +10,7 @@ public class BrokenFloorTest {
         // Using only method checkFloor to find out minimal broken floor by applying
         //binary search algorithm
         int res = -1;
-        int first = Integer.MIN_VALUE;
+        int first = 0;
         int last = Integer.MAX_VALUE;
         int middleIndex = (first + last) / 2;
 
@@ -18,8 +18,6 @@ public class BrokenFloorTest {
             try {
                 bbf.checkFloor(middleIndex);
                 first = middleIndex + 1;
-            } catch (IllegalArgumentException e) {
-                last = middleIndex - 1;
             } catch (Exception e) {
                 last = middleIndex - 1;
                 res = middleIndex;
